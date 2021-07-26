@@ -13,7 +13,7 @@ class UsersVC: UITableViewController {
 
     private let jsonUrl = "https://jsonplaceholder.typicode.com/users"
 
-    private var users: [User] = []
+    static var users: [User] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,12 +23,12 @@ class UsersVC: UITableViewController {
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        users.count
+        UsersVC.users.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserCell
-        let user = users[indexPath.row]
+        let user = UsersVC.users[indexPath.row]
         cell.configure(with: user)
         return cell
     }
@@ -39,8 +39,8 @@ class UsersVC: UITableViewController {
         let task = URLSession.shared.dataTask(with: url) { data, _, _ in
             guard let data = data else { return }
             do {
-                self.users = try JSONDecoder().decode([User].self, from: data)
-                print(self.users)
+                UsersVC.users = try JSONDecoder().decode([User].self, from: data)
+                print(UsersVC.users)
             } catch {
                 print(error)
             }
@@ -50,4 +50,13 @@ class UsersVC: UITableViewController {
         }
         task.resume()
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard segue.identifier == "Privet" else { return }
+        guard let indexPath = tableView.indexPathForSelectedRow else { return }
+
+        let FullInformatiomnVC = segue.destination as! FullInformationVC
+        FullInformatiomnVC.index = indexPath.row
+    }
+   
 }
